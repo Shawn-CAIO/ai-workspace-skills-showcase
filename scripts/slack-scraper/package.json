@@ -1,0 +1,14 @@
+{
+  "name": "slack-scraper",
+  "version": "1.0.0",
+  "description": "Playwright-based Slack external workspace scraper",
+  "type": "module",
+  "scripts": {
+    "auth": "node auth-setup.js",
+    "sync": "node sync-channels.js",
+    "check-session": "node check-session.js"
+  },
+  "dependencies": {
+    "playwright": "^1.59.0"
+  }
+}

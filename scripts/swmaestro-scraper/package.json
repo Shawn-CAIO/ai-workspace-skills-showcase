@@ -1,0 +1,17 @@
+{
+  "name": "swmaestro-scraper",
+  "version": "1.0.0",
+  "description": "Playwright-based swmaestro.ai mentor lecture list scraper",
+  "type": "module",
+  "scripts": {
+    "auth": "node auth-setup.js",
+    "scrape": "node scrape-list.js",
+    "my": "node scrape-my-mentoring.js",
+    "my:detail": "node scrape-my-mentoring.js --with-applicants",
+    "my:inspect": "node scrape-my-mentoring.js --inspect"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "playwright": "^1.59.0"
+  }
+}

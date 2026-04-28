@@ -1,0 +1,29 @@
+# Node
+node_modules/
+package-lock.json.bak
+
+# Local credentials / sessions (NEVER commit)
+.env
+.env.local
+.env.*.local
+.webex-tokens.json
+*-state.json
+
+# Scraper local artifacts
+scripts/slack-scraper/storage/
+scripts/swmaestro-scraper/storage/
+scripts/swmaestro-scraper/output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Personal sync (if cloned alongside)
+sync/
+projects/

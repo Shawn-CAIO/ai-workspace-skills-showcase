@@ -1,0 +1,33 @@
+{
+  "workspaces": [
+    {
+      "name": "Workspace A",
+      "slug": "workspace-a",
+      "url": "https://app.slack.com/client/TXXXXXXXXX1",
+      "channels": [
+        {
+          "name": "ai-project",
+          "url": "https://app.slack.com/client/TXXXXXXXXX1/CXXXXXXXXX1"
+        }
+      ]
+    },
+    {
+      "name": "Workspace B",
+      "slug": "workspace-b",
+      "url": "https://app.slack.com/client/TXXXXXXXXX2",
+      "channels": [
+        {
+          "name": "tutor-main",
+          "url": "https://app.slack.com/client/TXXXXXXXXX2/CXXXXXXXXX2"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "scrollDelayMs": 1500,
+    "maxScrollAttempts": 50,
+    "sessionDir": "./storage/session",
+    "messagesDir": "./storage/messages",
+    "headless": false
+  }
+}
