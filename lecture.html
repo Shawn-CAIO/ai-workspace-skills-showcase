@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code + Skills 개인 자동화 시스템 — 강수혁 멘토특강</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf8; --fg: #1a1a1a; --muted: #6b6b6b; --border: #e2e0dc;
+    --accent: #2d5a27; --accent-light: #e8f0e6; --card: #ffffff;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Noto Sans KR', -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.7; font-weight: 300; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 680px; margin: 0 auto; padding: 60px 24px 100px; }
+  .header { margin-bottom: 40px; animation: fadeUp 0.6s ease; }
+  .header-date { font-family: var(--mono); font-size: 13px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 12px; }
+  .header h1 { font-size: 26px; font-weight: 700; line-height: 1.4; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .header p { color: var(--muted); font-size: 14px; }
+  .lecture { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 36px 32px; margin-bottom: 32px; animation: fadeUp 0.6s ease 0.1s backwards; }
+  .lecture-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); background: var(--accent-light); padding: 4px 10px; border-radius: 4px; margin-bottom: 16px; }
+  .lecture-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; padding: 16px; background: var(--bg); border-radius: 8px; }
+  .meta-item { font-size: 13px; }
+  .meta-item .label { color: var(--muted); font-size: 11px; letter-spacing: 0.3px; margin-bottom: 2px; }
+  .lecture-body p { font-size: 15px; margin-bottom: 16px; color: #333; }
+  .lecture-body h3 { font-size: 14px; font-weight: 600; margin-top: 28px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .lecture-body ul { list-style: none; padding: 0; }
+  .lecture-body ul li { font-size: 14px; padding: 6px 0; padding-left: 16px; position: relative; color: #444; }
+  .lecture-body ul li::before { content: ''; position: absolute; left: 0; top: 13px; width: 5px; height: 5px; border-radius: 50%; background: var(--border); }
+  .curriculum { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  .curriculum tr { border-bottom: 1px solid var(--border); }
+  .curriculum tr:last-child { border-bottom: none; }
+  .curriculum td { padding: 10px 0; vertical-align: top; }
+  .curriculum td:first-child { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; width: 100px; padding-right: 16px; }
+  .curriculum td:last-child { color: #333; }
+  .speaker { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); line-height: 1.8; }
+  .speaker strong { color: var(--fg); font-weight: 600; }
+  .footer { text-align: center; padding-top: 40px; font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.3px; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 520px) { .page { padding: 40px 16px 80px; } .lecture { padding: 24px 20px; } .header h1 { font-size: 22px; } .meta-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-date">2026.04.30 Thu · 10:00 – 12:00</div>
+    <h1>Claude Code + Skills로 만든 개인 자동화 시스템 — 실제 워크플로우 9개 공개</h1>
+    <p>AI·SW마에스트로 16기 멘토특강 · 강수혁 · 오프라인 10명 한정</p>
+  </div>
+
+  <div class="lecture">
+    <div class="lecture-badge"><span class="dot"></span>오프라인 M2 스페이스</div>
+
+    <div class="meta-grid">
+      <div class="meta-item"><div class="label">일시</div><div class="value">04.30(목) 10:00 – 12:00</div></div>
+      <div class="meta-item"><div class="label">장소</div><div class="value">센터 M2 스페이스</div></div>
+      <div class="meta-item"><div class="label">정원</div><div class="value">10명</div></div>
+      <div class="meta-item"><div class="label">형태</div><div class="value">라이브 시연</div></div>
+    </div>
+
+    <div class="lecture-body">
+      <p>Claude Code Max를 본격적으로 쓰기 시작하는 분들에게 도움을 주고자, 제가 한 달째 실무와 개인 일정 관리에 쓰고 있는 개인 ai-workspace 셋업을 공유합니다.</p>
+      <p>AI 교육·컨설팅을 하면서 반복되는 업무를 하나씩 자동화해왔습니다. 현재 9개 커스텀 스킬이 매일 돌아가고 있고, 이 강의에서는 그 셋업 전체를 열어봅니다.</p>
+
+      <h3>다루는 내용</h3>
+      <ul>
+        <li>매일 아침 Slack + Webex + 소마 마이페이지 + Gmail + Calendar를 한 곳으로 모으는 context sync</li>
+        <li>캘린더 앞뒤 일정의 location을 읽어 이동경로를 자동 등록하는 route planner</li>
+        <li>Playwright 기반 외부 Slack 워크스페이스 스크래퍼</li>
+        <li>세션 종료 시 작업 정리·학습 기록을 남기는 session wrap</li>
+        <li>커스텀 스킬의 구조와 만드는 법 — SKILL.md, install-script, 맥 간 동기화</li>
+        <li>메모리 시스템 — 대화가 끝나도 맥락이 유지되는 구조</li>
+        <li>이 멘토특강 기획 자체가 만들어진 과정 — 800건 크롤링 → 분석 → Notion 발행</li>
+      </ul>
+
+      <h3>이런 분에게</h3>
+      <ul>
+        <li>Claude Code Max를 곧 쓸 예정인데 뭐부터 세팅할지 참고가 필요한 분</li>
+        <li>Cursor, ChatGPT 외에 다른 워크플로우를 구경해보고 싶은 분</li>
+        <li>반복 업무를 줄이고 싶은데 어디서부터 시작할지 감이 안 잡히는 분</li>
+      </ul>
+
+      <h3>커리큘럼</h3>
+      <table class="curriculum">
+        <tr><td>10:00–10:20</td><td>배경 — 왜 이런 걸 만들게 됐는지, Max 요금제와 비용 구조</td></tr>
+        <tr><td>10:20–11:40</td><td>9개 자동화 라이브 시연 — 각각의 문제 → 구현 → 실제 사용 화면</td></tr>
+        <tr><td>11:40–12:00</td><td>Q&A</td></tr>
+      </table>
+
+      <h3>공개 자료</h3>
+      <p>📺 <strong>라이브 데모 페이지</strong> — 9개 스킬 한눈에 보기 (다이어그램·스크린샷 포함):<br>
+        <a href="https://ai-workspace-skills-showcase.vercel.app" target="_blank" rel="noopener noreferrer"><strong>ai-workspace-skills-showcase.vercel.app</strong></a></p>
+      <p>💾 <strong>공개 저장소</strong> — 9개 스킬 + 보조 스크립트 전체 코드:<br>
+        <a href="https://github.com/Shawn-CAIO/ai-workspace-skills-showcase" target="_blank" rel="noopener noreferrer"><strong>github.com/Shawn-CAIO/ai-workspace-skills-showcase</strong></a></p>
+      <p>강의 후 클론해서 본인 환경에 맞게 placeholder만 채우면 바로 동작합니다. 시연 중 살펴본 코드와 동일한 구조입니다.</p>
+
+      <h3>준비물</h3>
+      <ul>
+        <li>Claude Pro 플랜 이상 필수 (Max 플랜 권장)</li>
+        <li>본인 노트북 — Claude Code CLI 설치 권장, 없어도 관찰 참여 가능</li>
+        <li>"자동화하고 싶은 반복 업무" 2–3가지 생각해오기</li>
+      </ul>
+
+      <div class="speaker">
+        <strong>강수혁</strong> — AI 기술 튜터·컨설턴트<br>
+        KAIST 전기전자 / 서울대 대학원 석사<br>
+        마이프랜차이즈 공동창업, CSO·CAIO (2019–2025)<br>
+        라쿠텐심포니코리아 CSO·COO (2013–2019, 센드애니웨어)<br>
+        현재 포스코DX, 대웅, 삼성, 한솔 등 AI 교육·컨설팅
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">swmaestro 2026 · 접수 04.16 – 04.29</div>
+</div>
+</body>
+</html>
