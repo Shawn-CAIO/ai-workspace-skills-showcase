@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4/30 자유멘토링 — 기술을 사업으로 (진행용)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf8; --fg: #1a1a1a; --muted: #6b6b6b; --border: #e2e0dc;
+    --accent: #2d5a27; --accent-light: #e8f0e6; --accent-soft: #f3f7f2;
+    --card: #ffffff; --warn: #a55200; --warn-bg: #fdf4e7;
+    --highlight: #1e3f8a; --highlight-light: #e8eef9;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Noto Sans KR', -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.7; font-weight: 300; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 24px 120px; }
+
+  .header { margin-bottom: 40px; animation: fadeUp 0.6s ease; }
+  .header-date { font-family: var(--mono); font-size: 13px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 12px; }
+  .header h1 { font-size: 28px; font-weight: 700; line-height: 1.35; letter-spacing: -0.5px; margin-bottom: 10px; }
+  .header p.sub { color: var(--muted); font-size: 14px; }
+
+  .welcome { background: linear-gradient(135deg, #f3f7f2, #fdf4e7); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 28px; animation: fadeUp 0.5s ease 0.1s backwards; }
+  .welcome .label { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .welcome h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .welcome .names { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .welcome .names span { font-family: var(--mono); font-size: 13px; color: var(--highlight); background: var(--highlight-light); padding: 4px 12px; border-radius: 16px; font-weight: 500; }
+
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px 30px; margin-bottom: 24px; animation: fadeUp 0.5s ease backwards; }
+
+  h2 { font-size: 18px; font-weight: 700; margin-bottom: 18px; letter-spacing: -0.2px; }
+  h2 .sec-num { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--accent); background: var(--accent-light); padding: 2px 8px; border-radius: 4px; margin-right: 10px; vertical-align: 2px; }
+  h3 { font-size: 15px; font-weight: 600; margin: 24px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  p { font-size: 14.5px; color: #333; margin-bottom: 12px; }
+  p.lead { font-size: 16px; color: var(--fg); font-weight: 400; line-height: 1.65; }
+
+  .schedule { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .schedule tr { border-bottom: 1px solid var(--border); }
+  .schedule tr:last-child { border-bottom: none; }
+  .schedule td { padding: 12px 4px; vertical-align: top; }
+  .schedule td:first-child { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; width: 110px; padding-right: 18px; }
+  .schedule td .stage { color: var(--accent); font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .schedule td .note { color: #555; font-size: 13.5px; line-height: 1.6; }
+
+  .topic { border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 18px 22px; margin-top: 14px; background: #fdfdfb; transition: border-color 0.2s, transform 0.2s; }
+  .topic:hover { border-color: var(--accent); transform: translateX(2px); }
+  .topic-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .topic-num { font-family: var(--mono); font-size: 11px; color: var(--accent); background: var(--accent-light); padding: 3px 9px; border-radius: 4px; font-weight: 500; }
+  .topic-title { font-size: 15.5px; font-weight: 700; color: var(--fg); }
+  .topic-body { font-size: 14px; color: #333; line-height: 1.7; }
+  .topic-body strong { color: var(--accent); font-weight: 600; }
+
+  .case { background: var(--accent-soft); border: 1px solid var(--accent-light); border-radius: 8px; padding: 14px 18px; margin: 12px 0; font-size: 13.5px; color: #1e3f1a; line-height: 1.65; }
+  .case-tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 500; color: var(--accent); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 4px; }
+  .case strong { color: var(--accent); font-weight: 600; }
+
+  .framework { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .framework .step { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-size: 13.5px; }
+  .framework .step .num { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .framework .step b { font-weight: 600; color: var(--fg); }
+  .framework .step .ex { color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.55; }
+
+  .speaker { background: var(--accent-soft); border-radius: 10px; padding: 20px 22px; font-size: 13.5px; color: #2a2a2a; line-height: 1.8; }
+  .speaker strong { color: var(--accent); font-weight: 700; font-size: 15px; }
+
+  .links { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .links a { display: block; padding: 16px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--fg); transition: border-color 0.2s, transform 0.15s; }
+  .links a:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .links .icon { font-size: 22px; margin-bottom: 6px; display: block; }
+  .links .label { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 4px; }
+  .links .url { font-size: 13px; color: var(--accent); font-family: var(--mono); word-break: break-all; }
+
+  ul.bullets { list-style: none; padding: 0; margin: 8px 0; }
+  ul.bullets li { font-size: 14px; padding: 6px 0 6px 18px; position: relative; color: #333; line-height: 1.65; }
+  ul.bullets li::before { content: ''; position: absolute; left: 0; top: 14px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.55; }
+  ul.bullets li b { color: var(--fg); font-weight: 600; }
+
+  .footer { text-align: center; padding-top: 36px; font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.3px; }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 560px) {
+    .page { padding: 40px 16px 80px; } section { padding: 24px 20px; }
+    .header h1 { font-size: 23px; } .framework, .links { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-date">2026.04.30 Thu · 12:00–14:00 · 스페이스 A1</div>
+    <h1>기술을 사업으로 — 사용자 0명에서 첫 수익까지</h1>
+    <p class="sub">AI·SW마에스트로 17기 자유멘토링 · 강수혁</p>
+  </div>
+
+  <!-- WELCOME -->
+  <div class="welcome">
+    <div class="label">Welcome</div>
+    <h2>오늘 함께하는 멘티 3명</h2>
+    <p style="font-size: 13.5px; color: #333; margin: 0;">3명의 신청자분과 60분 깊은 1:1 코칭을 위해 자리를 마련했습니다. 가볍게 시작해요.</p>
+  </div>
+
+  <!-- 1. 진행 흐름 -->
+  <section>
+    <h2><span class="sec-num">01</span>진행 흐름 (120분)</h2>
+    <table class="schedule">
+      <tr><td>12:00–12:15</td><td><div class="stage">아이스브레이킹</div><div class="note">자기소개 한 줄 · 프로젝트 한 줄 · 지금 가장 막막한 이슈 1가지</div></td></tr>
+      <tr><td>12:15–12:55</td><td><div class="stage">핵심 주제 (7개 中 선택)</div><div class="note">참가자 관심사에 따라 2~3개 깊게. 사례 위주로 — 답이 아니라 "어떤 질문을 해야 하는지"</div></td></tr>
+      <tr><td>12:55–13:55</td><td><div class="stage">개별 코칭 (3명 × 20분)</div><div class="note">각자 프로젝트에 1:1 적용. 다른 분들도 옆에서 듣는 게 학습</div></td></tr>
+      <tr><td>13:55–14:00</td><td><div class="stage">마무리 + 후속 채널</div><div class="note">공통 질문 정리 · Webex DM 그룹방으로 follow-up 채널 유지</div></td></tr>
+    </table>
+  </section>
+
+  <!-- 2. 핵심 주제 7개 -->
+  <section>
+    <h2><span class="sec-num">02</span>오늘 다루는 7가지 — 사용자 0명에서 첫 수익까지</h2>
+    <p>스타트업 3회, 130억 투자 유치, 글로벌 MAU 360만 — 그 과정에서 부딪힌 <strong>"좋은 기술인데 왜 안 팔리지?"</strong>에 대한 답을 솔직하게 나눕니다.</p>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">01</span><span class="topic-title">끝에서부터 거꾸로 만든다</span></div>
+      <div class="topic-body">제품을 만들기 전에 <strong>"이 제품을 본 사용자가 어떤 트윗을 쓸까?"</strong>부터 쓴다. 아마존이 PR 보도자료를 먼저 쓰고 제품을 만드는 Working Backward 원칙. 17기 프로젝트 기획에 바로 적용 가능.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">02</span><span class="topic-title">첫 100명의 사용자는 어떻게 데려왔나</span></div>
+      <div class="topic-body">초기 사용자 100명은 마케팅이 아니라 발품. <strong>"내가 직접 알려주고, 직접 설치해주고, 직접 답변하던"</strong> 시기.</div>
+      <div class="case">
+        <span class="case-tag">📌 Case · Send Anywhere</span>
+        Reddit·Hacker News·blog comment 손수 답변. 14개월 만에 글로벌 MAU 100만 → 5년 차 360만.
+      </div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">03</span><span class="topic-title">"써보니까 별로인데요"</span></div>
+      <div class="topic-body">사용자 피드백을 <strong>제품 개선으로 연결하는 프로세스</strong>. 칭찬은 무시, 불평은 분류, 침묵은 가장 무서운 신호. 5명 인터뷰 → 가설 1개 다시 → 다음 주 다시 5명.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">04</span><span class="topic-title">매출 $0 → 월 $50,000+ 까지의 현실</span></div>
+      <div class="topic-body">첫 수익이 나오는 순간이 <strong>가장 작은 변곡점</strong>이다. 가격을 올릴 용기·할인할 용기·환불할 용기. B2C·B2B·SaaS 각각의 첫 결제 사이클.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">05</span><span class="topic-title">투자자는 기술력을 안 봅니다</span></div>
+      <div class="topic-body">130억 투자 유치 현장에서 배운 <strong>진짜 기준</strong> — 시장 크기, 팀 신뢰도, 빠른 학습 속도. 기술 디테일은 보고서 30페이지 중 2장.</div>
+      <div class="case">
+        <span class="case-tag">📌 Case · 마이프랜차이즈</span>
+        시드~시리즈B 130억. "이 팀이 1년 후 어디까지 가 있을지"를 보여준 자리.
+      </div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">06</span><span class="topic-title">1년 만에 접은 첫 창업 vs 5년 넘게 간 두 번째 창업 — 뭐가 달랐나</span></div>
+      <div class="topic-body">기술이 더 좋았던 첫 창업이 더 빨리 망했다. <strong>차이는 사용자 곁에 있던 시간</strong>. 매일 사용자 메시지를 보는 사람이 누구였는지.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-head"><span class="topic-num">07</span><span class="topic-title">마에스트로 프로젝트에 바로 적용하는 사업화 프레임워크</span></div>
+      <div class="topic-body">위 6개를 한 장으로 압축한 4단계 프레임워크. 17기 일정에 맞춰 주별 액션으로.</div>
+      <div class="framework">
+        <div class="step"><div class="num">STEP 1</div><b>가설 한 줄</b><div class="ex">누가 · 무엇을 · 왜 (3주차까지)</div></div>
+        <div class="step"><div class="num">STEP 2</div><b>5명 인터뷰</b><div class="ex">랜딩페이지 + 양식 / 노션 폼 (5주차)</div></div>
+        <div class="step"><div class="num">STEP 3</div><b>최소 작동 1버전</b><div class="ex">기술적 완성도 X, 손으로 구현해도 OK (8주차)</div></div>
+        <div class="step"><div class="num">STEP 4</div><b>첫 결제 1건</b><div class="ex">금액 무관, "지갑 여는 사용자"가 핵심 신호 (12주차)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 강사 -->
+  <section>
+    <h2><span class="sec-num">03</span>강사</h2>
+    <div class="speaker">
+      <strong>강수혁</strong> — AI 기술 튜터·컨설턴트<br>
+      KAIST 전기전자 / 서울대 대학원 석사<br>
+      마이프랜차이즈 공동창업, CSO·CAIO (2019–2025) — 시드~시리즈B 130억 투자 유치<br>
+      라쿠텐심포니코리아 (이스트몹) CSO·COO (2013–2019) — Send Anywhere MAU 360만<br>
+      위홈(코자자) CSO (2012–2013) — 공유경제 플랫폼 공동창업<br>
+      LG디스플레이 전략마케팅·R&amp;D (2004–2012)<br>
+      현재 포스코DX, 대웅, 삼성, 한솔 등 AI 교육·컨설팅
+    </div>
+  </section>
+
+  <!-- 4. 자료 링크 -->
+  <section>
+    <h2><span class="sec-num">04</span>오늘 자료 + 후속 채널</h2>
+    <div class="links">
+      <a href="https://ai-workspace-skills-showcase.vercel.app" target="_blank" rel="noopener noreferrer">
+        <span class="icon">📺</span>
+        <div class="label">Live Demo</div>
+        <div>오전 멘토특강 자료 — 9개 스킬 한눈에</div>
+        <div class="url">ai-workspace-skills-showcase.vercel.app</div>
+      </a>
+      <a href="https://github.com/Shawn-CAIO/ai-workspace-skills-showcase" target="_blank" rel="noopener noreferrer">
+        <span class="icon">💾</span>
+        <div class="label">Code Repository</div>
+        <div>스킬 9개 + 보조 스크립트 전체</div>
+        <div class="url">github.com/Shawn-CAIO/ai-workspace-skills-showcase</div>
+      </a>
+    </div>
+    <h3>후속 채널 (선택)</h3>
+    <ul class="bullets">
+      <li><b>Webex DM 그룹방</b> — 오늘 못 다룬 질문, 추후 공유 사례, 멘티 간 정보 교환</li>
+      <li><b>1:1 follow-up DM</b> — 개별 프로젝트 진행 상황, 가설 검증 결과 공유 환영</li>
+      <li><b>다음 정기 자유멘토링</b> — 5월 일정 공지 예정 (Webex 활동 그룹)</li>
+    </ul>
+  </section>
+
+  <div class="footer">
+    강수혁 · AI·SW마에스트로 17기 자유멘토링 · 2026.04.30 · 스페이스 A1<br>
+    <a href="0430.html">← 4/30 강의 목록</a> · <a href="lecture.html">오전 멘토특강</a> · <a href="/">9개 스킬 쇼케이스</a>
+  </div>
+</div>
+</body>
+</html>
