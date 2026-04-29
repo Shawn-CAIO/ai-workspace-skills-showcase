@@ -110,7 +110,15 @@
   .term-out { color: #b5b5b5; }
   .term-out b { color: #e8e8e8; font-weight: 500; }
 
-  .img-screenshot { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+  .img-screenshot { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); cursor: zoom-in; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .img-screenshot:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(20, 20, 18, 0.92); z-index: 1000; align-items: center; justify-content: center; padding: 32px; cursor: zoom-out; animation: fadeIn 0.2s ease; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 100%; height: auto; border-radius: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .lightbox-close { position: absolute; top: 20px; right: 24px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 22px; line-height: 40px; text-align: center; cursor: pointer; transition: background 0.15s; }
+  .lightbox-close:hover { background: rgba(255,255,255,0.22); }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .img-pending { display: block; padding: 40px 24px; background: var(--bg); border: 1px dashed var(--border); border-radius: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; margin: 12px 0; }
   .img-pending strong { color: var(--warn); font-weight: 500; }
   .img-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
@@ -623,6 +631,10 @@ triggers:
     <a href="mentoring-0430-am_4.html">← 특강 공지로 돌아가기</a>
   </div>
 </div>
+<div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
+  <span class="lightbox-close">×</span>
+  <img id="lightbox-img" alt="">
+</div>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>
   mermaid.initialize({
@@ -640,6 +652,21 @@ triggers:
     },
     flowchart: { curve: 'basis', useMaxWidth: true }
   });
+
+  (function() {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    document.querySelectorAll('img.img-screenshot').forEach(function(img) {
+      img.addEventListener('click', function() {
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('active');
+      });
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') lb.classList.remove('active');
+    });
+  })();
 </script>
 </body>
 </html>
