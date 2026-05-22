@@ -1,6 +1,6 @@
 ---
 name: my-context-sync
-description: User의 컨텍스트 싱크. Slack, Gmail, Google Calendar에서 최근 정보를 수집하고 하나의 문서로 정리한다. 모든 MCP 도구는 claude.ai Connectors로 연결됨. "싱크", "sync", "정보 수집" 요청에 사용.
+description: User의 일일 컨텍스트 싱크. Slack(외부 워크스페이스), Gmail, Google Calendar에서 최근 정보를 수집하고, 마에스트로 데이터(my-maestro 결과 JSON + Webex)도 함께 통합해서 하나의 문서로 정리한다. "싱크", "sync", "정보 수집" 요청에 사용.
 triggers:
   - "싱크"
   - "sync"
@@ -36,7 +36,10 @@ workspaces:
     role: "싱글채널 게스트"
   - name: "Workspace B"
     slug: "workspace-b"
-    role: "기술튜터"
+    role: "기술튜터 — 기존 워크스페이스/채널"
+  - name: "Workspace C"
+    slug: "workspace-c"
+    role: "기술튜터 — 신규 모집글 워크스페이스/채널"
 ```
 
 수집 방법:
@@ -49,6 +52,7 @@ workspaces:
 
 3. 결과 읽기:
    scripts/slack-scraper/storage/messages/{slug}-{날짜}.json 파일을 Read 도구로 읽는다.
+   Workspace B는 당분간 `{workspace-b, workspace-c}-{날짜}.json`을 모두 읽고 한 섹션에 병합한다.
 ```
 
 > **폴백 (Playwright 세션 만료 시)**: Gmail 간접 수집(소스 2의 호출 2)으로 대체.
@@ -59,7 +63,7 @@ workspaces:
 - 의사결정 사항 ("확정", "결정", "합의" 키워드)
 - 나에게 멘션된 메시지
 - 답장이 필요한 질문
-- 교육 일정 조율 (Workspace B)
+- 교육 일정 조율 및 기술튜터 모집글 (Workspace B 기존 + 신규)
 
 ### 소스 2: Gmail
 
@@ -138,112 +142,59 @@ expires 날짜가 지난 캘린더는 수집하지 않는다.
 - 일정 충돌 여부
 - 여러 캘린더의 일정이 겹치는 경우 시간순으로 통합 표시
 
-### 소스 4: Webex (AI·SW마에스트로)
+### 소스 4: 마에스트로 (my-maestro 스킬에 위임)
 
 | 항목 | 값 |
 |------|-----|
-| MCP 도구 | `mcp__webex-messaging__list_rooms`, `mcp__webex-messaging__list_messages` |
-| 수집 범위 | 최근 24~48시간 내 메시지 |
+| 위임 스킬 | `my-maestro` |
+| 읽을 결과 파일 | `scripts/swmaestro-scraper/output/my-mentoring-latest.json` (서울 멘토링·보고서) |
+|  | `scripts/swmaestro-scraper/output/my-mentoring-busan-latest.json` (부산) |
+|  | `scripts/swmaestro-scraper/output/my-reservations-latest.json` (회의실 예약, 서울+부산) |
+| Webex 메시지 | my-maestro 기능 4와 동일한 방식으로 직접 수집 (캐시 없음, 매번 fresh) |
 
-> AI·SW마에스트로 프로그램은 Webex를 공식 소통 채널로 사용. Slack 탐색은 하지 않는다.
-> User은 비기술멘토(창업/투자)로 활동 중.
+> SWMaestro 홈페이지 스크래핑은 my-maestro에 위임. 이 스킬에서는 직접 호출하지 않고
+> 최신 JSON 결과 파일만 읽어서 통합 문서에 포함한다.
 
-대상 채팅방 (우선순위 순):
+#### 신선도(Staleness) 판단
 
-```yaml
-rooms:
-  - title: "2026년 서울센터 활동 그룹"
-    priority: 1
-    purpose: "메인 채팅방 — 멘토/연수생/사무국 공용, 자유멘토링·특강 모집글 다수"
-  - title: "멘토 그룹"
-    priority: 2
-    purpose: "멘토 전용 질의응답 — 운영 규정, 공문, 시간 인정 등"
-  - title: "공지사항"
-    priority: 3
-    purpose: "사무국 공식 공지 (멘토팀 소속)"
-  - title: "User멘토_*"
-    priority: 1
-    purpose: "User 개인 팀 멘토링방 — 이름에 'User' 포함된 모든 방"
+각 JSON 파일의 `scrapedAt` 필드 기준:
+
+```
+4시간 이내   → 그대로 사용 (조용히)
+4~24시간     → "N시간 전 수집된 데이터"로 표시 + 사용자에게 갱신 여부 한 번 묻기
+24시간 초과  → my-maestro 자동 재실행 권장 (또는 사용자 확인 후 실행)
+파일 없음    → my-maestro 첫 실행 권장
 ```
 
-수집 방법:
+#### 수집 방법
+
 ```
-1. 전체 방 목록 가져오기:
+1. JSON 파일 3개 Read (Read 도구):
+   - my-mentoring-latest.json
+   - my-mentoring-busan-latest.json
+   - my-reservations-latest.json
+
+2. 각 파일의 scrapedAt으로 신선도 체크. 24h 초과 또는 파일 없음 시:
+   사용자에게 "마에스트로 데이터를 새로 수집할까요?" 묻기 → yes면 my-maestro 호출
+
+3. Webex 메시지는 매번 fresh로 수집 (my-maestro 기능 4와 동일 절차):
    mcp__webex-messaging__list_rooms(sortBy="lastactivity", max=30)
-
-2. 위 "대상 채팅방" 제목과 매칭되는 roomId 추출.
-   - "User" 포함된 방은 전부 수집 (개인 팀 멘토링방)
-   - 나머지는 제목 정확 매칭
-
-3. 각 방에 대해 병렬로 메시지 수집:
-   mcp__webex-messaging__list_messages(roomId=..., max=30)
-
-4. created 타임스탬프 기준으로 최근 24~48시간 내 메시지만 필터링.
+   → 대상 방 필터링 → 병렬 list_messages → 24~48h 메시지 추출
 ```
 
-추출할 정보:
-- **자유멘토링/특강 모집**: 비기술(창업/투자/BM) 주제 우선, 기술 주제는 제목만
-- **사무국 공지사항**: 규정 변경, 보고서 제출, 설문 등
-- **User 멘토 관련**: 개인 멘토링방의 모든 멘티 메시지·질문
-- **비기술멘토 역할 관련 논의**: "비기술멘토", "창업", "VC" 등 키워드
-- **답장이 필요한 질문/멘션**
-- **오늘~이번 주 마에스트로 일정** (오프라인 센터 방문, 특강 등)
+#### 통합 출력 구조
 
-### 소스 5: SWMaestro MY 멘토링 (Playwright)
+마에스트로 섹션은 다음 4개 하위 섹션으로 출력:
+- **MY 멘토링·특강 (서울 + 부산)**: 표 형식, 모집인원 현황, 신청자
+- **보고서 현황 (서울 + 부산)**: 표 형식, 인정시간/지급액
+- **회의실 예약내역 (서울 + 부산)**: 표 형식, 회의실/사용기간/제목/상태
+- **Webex 메시지**: 공지사항/멘토 그룹/활동 그룹/개인 멘토링방별 하이라이트
 
-| 항목 | 값 |
-|------|-----|
-| 수집 도구 | `scripts/swmaestro-scraper/scrape-my-mentoring.js` (Playwright) |
-| 수집 범위 | 내가 개설한 멘토링/특강 전체 목록 |
+> 자세한 출력 포맷은 my-maestro SKILL.md의 "통합 출력 포맷" 섹션 참조.
 
-> swmaestro.ai 마이페이지 > 멘토링/특강게시판 > MY 멘토링 메뉴에서
-> 본인이 개설한 멘토링/특강의 모집인원 현황을 수집한다.
-> ID/PW 로그인 필요 → Playwright 세션 기반 수집.
+#### "5/23 빈 회의실 알려줘" 같은 즉석 요청
 
-수집 방법:
-```
-1. 세션 확인 (swmaestro-scraper는 slack-scraper와 별도 세션):
-   cd scripts/swmaestro-scraper && zsh -i -c 'node scrape-my-mentoring.js --with-applicants'
-
-   → 항상 --with-applicants 옵션을 사용하여 상세 페이지의 신청자 명단까지 수집한다.
-   → 세션 만료 시 자동 로그인(SWMAESTRO_ID/PW 환경변수 필요) 또는
-     cd scripts/swmaestro-scraper && zsh -i -c 'node auth-setup.js' 로 수동 재로그인
-
-   ⚠️ 반드시 `zsh -i -c '...'`로 감싸서 실행할 것. Claude Code의 Bash 툴은
-      non-interactive 셸이라 ~/.zshrc를 로드하지 않기 때문에
-      직접 `node ...`로 실행하면 환경변수가 비어서 자동 로그인이 실패한다.
-
-2. 결과 읽기:
-   scripts/swmaestro-scraper/output/my-mentoring-latest.json 파일을 Read 도구로 읽는다.
-```
-
-추출할 정보:
-
-**MY 멘토링 (멘토링/특강게시판)**:
-- 멘토링/특강 제목 및 카테고리 (자유멘토링/멘토특강)
-- 일시 (schedule)
-- **모집인원 현황** (신청인원 / 최대인원, 예: 3/6)
-- 상태 (접수중/마감/진행완료)
-- 상세 페이지의 신청자(연수생) 이름 목록
-
-**보고 게시판 (보고서 제출내역)**:
-- 구분 (자유멘토링/멘토특강)
-- 진행날짜
-- **상태** (접수중/승인/반려 등)
-- **인정시간** / **지급액** (승인 후 표시)
-
-> **초기 세팅 (맥별 1회)**:
-> ```bash
-> cd ~/ai-workspace/scripts/swmaestro-scraper
-> npm install
-> npx playwright install chromium
-> ```
-> **자동 로그인** (권장): `~/.zshrc`에 환경변수 설정 시 세션 만료돼도 자동 재로그인.
-> ```bash
-> export SWMAESTRO_ID="아이디"
-> export SWMAESTRO_PW="비밀번호"
-> ```
-> **수동 로그인** (폴백): 환경변수 미설정 시 `node auth-setup.js`로 브라우저 수동 로그인.
+이 스킬이 아니라 **my-maestro 기능 3**으로 라우팅. 컨텍스트 싱크에는 빈 회의실 조회를 포함하지 않음.
 
 ## 실행 흐름
 
@@ -251,49 +202,49 @@ rooms:
 
 ### 1단계: 병렬 수집
 
-5개 소스를 수집한다. Playwright 기반 소스(소스 1, 5)는 순차 실행, 나머지는 병렬.
+4개 소스를 수집한다. Playwright 기반 소스(소스 1)와 마에스트로 데이터 신선도 체크가 순차, 나머지는 병렬.
 
 ```
 수집 시작
-  ├── [소스 1] Slack scraper 실행 (Playwright)        ─── 순차 (1번째)
-  │     └── 세션 확인 → 메시지 수집 → JSON 저장
+  ├── [소스 1] Slack scraper 실행 (Playwright)               ─── 순차 (1번째)
+  ├── [소스 4 신선도 체크] my-maestro JSON 파일 3개 검사     ─── 순차 (2번째)
+  │     └── 24h 초과 시 사용자에게 "my-maestro 새로 돌릴까요?" 한 번 묻기
   │
-  ├── [소스 5] SWMaestro MY 멘토링 (Playwright)       ─── 순차 (2번째)
-  │     └── 세션 확인 → MY 멘토링 목록 수집 → JSON 저장
-  │
-  ├── [소스 1 결과] scraper JSON 읽기                  ─┐
-  ├── [소스 5 결과] my-mentoring-latest.json 읽기      │
-  ├── [소스 2-a] Gmail 안 읽은 메일                    │
-  ├── [소스 2-b] Gmail 외부 Slack 알림 (폴백)          ├── 병렬 실행
-  ├── [소스 3-a] Google Calendar (primary) 일정 수집   │
-  ├── [소스 3-b] 지피터스 21기 공통일정 수집            │  ← expires 확인 후 수집
-  ├── [소스 3-c] 바이브코딩 연습장 스터디 수집          │  ← expires 확인 후 수집
-  ├── [소스 4-a] Webex list_rooms (방 목록)             │
-  └── [소스 4-b] Webex list_messages (대상 방 × N)     ─┘  ← 4-a 결과 기반
+  ├── [소스 1 결과] scraper JSON 읽기                         ─┐
+  ├── [소스 2-a] Gmail 안 읽은 메일                            │
+  ├── [소스 2-b] Gmail 외부 Slack 알림 (폴백)                 ├── 병렬 실행
+  ├── [소스 3-a] Google Calendar (primary) 일정 수집          │
+  ├── [소스 3-b] 지피터스 21기 공통일정 수집                   │  ← expires 확인 후 수집
+  ├── [소스 3-c] 바이브코딩 연습장 스터디 수집                 │  ← expires 확인 후 수집
+  ├── [소스 4-a] my-maestro JSON 3개 Read (마에스트로/예약)    │
+  ├── [소스 4-b] Webex list_rooms (방 목록)                    │
+  └── [소스 4-c] Webex list_messages (대상 방 × N)            ─┘  ← 4-b 결과 기반
 수집 완료
 ```
 
-> **실행 순서 주의**: Playwright 기반 소스(소스 1 Slack, 소스 5 SWMaestro)는
-> 브라우저를 실행하므로 MCP 호출과 병렬로 실행하지 않는다.
-> 소스 1 → 소스 5 순서로 실행하고, 둘 다 JSON 저장 후 나머지를 병렬 수집한다.
-> Webex는 list_rooms → list_messages 순서가 필요하지만, Gmail/Calendar와는 병렬 가능.
-
-각 소스 수집은 subagent(Task 도구)로 실행한다:
+> **실행 순서 주의**: Slack scraper(소스 1)는 브라우저를 실행하므로 단독 순차.
+> 마에스트로 스크래퍼는 my-maestro에 위임 — 이 스킬은 결과 JSON만 읽기.
+> Webex MCP 호출은 마에스트로 JSON Read와 함께 병렬 가능.
 
 ```
-# 1. Playwright 기반 소스 순차 실행
+# 1. Slack scraper 순차 실행
 Bash: cd scripts/slack-scraper && node check-session.js
   → 세션 유효 시: cd scripts/slack-scraper && node sync-channels.js
   → 세션 만료 시: 사용자에게 안내 후 Gmail 폴백 사용
 
-Bash: cd scripts/swmaestro-scraper && zsh -i -c 'node scrape-my-mentoring.js --with-applicants'
-  (⚠️ zsh -i -c 필수. 환경변수 SWMAESTRO_ID/PW를 ~/.zshrc에서 로드해야 자동 로그인 동작)
-  → 자동 로그인 실패 시: 사용자에게 "zsh -i -c 'node auth-setup.js' 재실행" 안내 후 스킵
+# 2. 마에스트로 데이터 신선도 체크 (순차, 사용자 인터랙션 가능)
+Read: scripts/swmaestro-scraper/output/my-mentoring-latest.json (scrapedAt 확인)
+Read: scripts/swmaestro-scraper/output/my-mentoring-busan-latest.json
+Read: scripts/swmaestro-scraper/output/my-reservations-latest.json
+  → 셋 중 하나라도 24h 초과 또는 파일 없음 시:
+    사용자에게 "마에스트로 데이터 새로 수집할까요? (y/n)" 묻기
+    → y면 my-maestro 기능 1+2 실행 (3개 스크래퍼)
+    → n이면 stale 표시로 진행
 
-# 2. 나머지 소스 병렬 수집
-Task(description="Slack 결과 + SWMaestro 결과 + Gmail 수집", prompt="scraper JSON 읽기 + my-mentoring-latest.json 읽기 + 최근 7일 안 읽은 이메일 + 외부 Slack 알림(폴백)을 수집하라")
+# 3. 나머지 소스 병렬 수집
+Task(description="Slack + Gmail 수집", prompt="scraper JSON 읽기 + 최근 7일 안 읽은 이메일 + 외부 Slack 알림(폴백)을 수집하라")
 Task(description="Calendar 수집", prompt="오늘부터 7일간 일정을 primary + 지피터스 캘린더(expires 전이면)에서 수집하라")
-Task(description="Webex 마에스트로 수집", prompt="mcp__webex-messaging__list_rooms로 방 목록 받고, '서울센터 활동 그룹'/'멘토 그룹'/'공지사항(멘토팀)'/'User'이 포함된 방의 메시지를 최근 24~48시간 범위로 수집해 요약하라")
+Task(description="마에스트로 통합 (JSON 읽기 + Webex)", prompt="my-mentoring-latest.json + my-mentoring-busan-latest.json + my-reservations-latest.json 읽기. 그리고 mcp__webex-messaging__list_rooms로 방 목록 받고, '서울센터 활동 그룹'/'부산센터 활동그룹'/'멘토 그룹'/'[서울] 공지사항'/'[부산] 공지사항'/'User' 포함 방의 메시지를 최근 24~48시간 범위로 수집해 요약하라")
 ```
 
 ### 2단계: 결과 통합
@@ -342,6 +293,8 @@ Task(description="Webex 마에스트로 수집", prompt="mcp__webex-messaging__l
 
 파일 저장: sync/2026-03-04-context-sync.md
 ```
+
+> 의미 있는 변화가 있으면 다음 단계로 "위키 갱신"(wiki ingest) 트리거를 제안한다. 자동 ingest는 하지 않음 — Karpathy LLM Wiki 패턴은 선별적 ingest가 원칙. 자세한 운영은 `~/ai-workspace/CLAUDE.md`의 "Wiki 운영" 섹션 참고.
 
 ## 출력 포맷
 
@@ -398,22 +351,39 @@ Task(description="Webex 마에스트로 수집", prompt="mcp__webex-messaging__l
 ### 💬 User 개인 멘토링방
 - 멘티 질문, 답장 필요 항목
 
-## SWMaestro — MY 멘토링 현황
+## SWMaestro — MY 멘토링 현황 (서울)
 
 | 구분 | 제목 | 일시 | 신청/정원 | 상태 | 신청자 |
 |------|------|------|-----------|------|--------|
 | 자유멘토링 | 제목1 | 4/24(목) 10:00~12:00 | 3/5 | 접수중 | 홍길동, 김철수, 이영희 |
 | 멘토특강 | 제목2 | 4/30(수) 14:00~16:00 | 0/8 | 접수중 | - |
 
-> 수집 실패 시: "SWMaestro 세션 만료 — node auth-setup.js 재실행 필요" 표시
+## SWMaestro — MY 멘토링 현황 (부산)
 
-## SWMaestro — 보고서 제출 현황
+| 구분 | 제목 | 일시 | 신청/정원 | 상태 | 신청자 |
+|------|------|------|-----------|------|--------|
+| 멘토특강 | 제목 | 5/22(금) 15:00~17:00 | 1/7 | 접수중 | 이동원 |
 
-| 구분 | 진행날짜 | 상태 | 인정시간 | 지급액 |
-|------|----------|------|----------|--------|
-| 자유 멘토링 | 2026-04-10 | 접수중 | - | - |
+> 부산 0건이면 "부산 — 개설된 항목 없음"으로만 표시.
+> 수집 실패 시: "SWMaestro {서울|부산} 세션 만료 — auth 재실행 필요" 표시
 
-> 미제출 건이 있으면 액션 아이템으로 표시
+## SWMaestro — 보고서 제출 현황 (서울 + 부산)
+
+| 센터 | 구분 | 진행날짜 | 상태 | 인정시간 | 지급액 |
+|------|------|----------|------|----------|--------|
+| 서울 | 자유 멘토링 | 2026-04-10 | 승인 | 02:00 | 400,000원 |
+| 부산 | 멘토 특강 | 2026-05-22 | 접수중 | - | - |
+
+> 미제출 건이 있으면 액션 아이템으로 표시. 부산 0건이면 행 생략.
+
+## SWMaestro — 회의실 예약내역 (서울 + 부산)
+
+| 센터 | 회의실 | 사용기간 | 제목 | 상태 |
+|------|--------|----------|------|------|
+| 서울 | 7층 스페이스 S1-2 | 2026.05.01 10:00~11:59 | 멘토특강 | 예약완료 |
+| 부산 | 하이텐 - 22호실(8인) | 2026.05.23 10:00~11:59 | 멘토링특강 | 예약완료 |
+
+> 회의실 예약은 됐는데 멘토링/특강 게시판에 안 올라온 건 = "강의 개설 누락" 가능성 → 액션 아이템으로 표시.
 
 ## Gmail
 

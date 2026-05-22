@@ -20,7 +20,8 @@ Playwright로 외부 Slack 워크스페이스의 채널 메시지를 수집하�
 | 워크스페이스 | 역할 | 주요 채널 |
 |-------------|------|-----------|
 | Workspace A | 싱글채널 게스트 | AI프로젝트 |
-| Workspace B | 기술튜터 | 교육 일정 조율, 주요 공지 |
+| Workspace B | 기술튜터 | 교육 일정 조율, 주요 공지 (`workspace-b`, `https://app.slack.com/client/TXXXXXXX2/CXXXXXXXXX2`) |
+| Workspace C | 기술튜터 | 기술튜터 모집/교육 일정 조율, 주요 공지 (`workspace-c`, `https://app.slack.com/client/TXXXXXXX3/CXXXXXXXXX3`) |
 
 ## 사전 조건
 
@@ -71,10 +72,12 @@ cd scripts/slack-scraper && node sync-channels.js
 
 옵션:
 - `--workspace=workspace-a` — 특정 워크스페이스만
+- `--workspace=workspace-b` — Workspace B 채널만
+- `--workspace=workspace-c` — Workspace C 기술튜터 모집 채널만
 - `--since=2026-04-01` — 특정 날짜 이후만
 - `--full` — 전체 재수집
 
-기본 동작: 마지막 싱크 이후 메시지만 증분 수집
+기본 동작: 마지막 싱크 이후 메시지만 증분 수집. 당분간 Workspace B·C는 기존(`workspace-b`)과 신규(`workspace-c`) 워크스페이스를 둘 다 수집한다.
 
 ### 3단계: 결과 읽기
 
