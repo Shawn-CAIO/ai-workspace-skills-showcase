@@ -1,6 +1,6 @@
 # ai-workspace-skills-showcase
 
-Claude Code 기반 개인 자동화 시스템 — **Custom Skills 9개 + 보조 스크립트** 공개본.
+Claude Code 기반 개인 자동화 시스템 — **Custom Skills 11개 + 보조 스크립트** 공개본.
 
 > 2026-04-30 AI·SW마에스트로 멘토특강 *"Claude Code + Skills로 만든 개인 자동화 시스템"* 데모용 공개 저장소입니다. 실제 운영 환경(개인 워크스페이스)에서 분리·sanitize한 버전이라, 그대로 쓰려면 본인 환경에 맞게 ID/키/주소를 채워야 합니다.
 
@@ -8,13 +8,15 @@ Claude Code 기반 개인 자동화 시스템 — **Custom Skills 9개 + 보조 
 
 ```
 ai-workspace-skills-showcase/
-├── skills-source/            # 9개 Custom Skills (각 디렉터리 = 1 skill)
+├── skills-source/            # 11개 Custom Skills (각 디렉터리 = 1 skill)
 │   ├── my-clarify/           # 모호한 요구사항을 4분면으로 명확화
 │   ├── my-content-digest/    # Quiz-First 학습 (퀴즈부터 내고 틀린 부분 학습)
 │   ├── my-context-sync/      # Slack + Gmail + Calendar + Webex 통합 싱크
 │   ├── my-fetch-tweet/       # X/Twitter 트윗 요약·번역
 │   ├── my-fetch-youtube/     # YouTube 자막 추출 + 자동자막 보정 + 요약
 │   ├── my-find-restaurant/   # 네이버 로컬 검색 + 캘린더 일정 반영
+│   ├── my-maestro/           # 멘토 활동 통합 관리 (멘토링·회의실 예약·Webex)
+│   ├── my-market-summary/    # 증시 마감 요약 자동 수집 + Slack 발송
 │   ├── my-route-planner/     # 출발지/도착지 경로 + 캘린더 자동 등록
 │   ├── my-session-wrap/      # 세션 종료 시 작업 정리·학습 기록
 │   └── my-slack-scraper/     # Playwright로 외부 Slack 게스트 채널 수집
@@ -49,6 +51,7 @@ node scripts/webex-mcp/oauth-setup.js
 | `skills-source/my-find-restaurant/SKILL.md` | 동일 — 집 주소·좌표 |
 | `skills-source/my-context-sync/SKILL.md` | Calendar ID(`c_xxxxxxxx_*`), Notion DB ID(`00000000-...`), Slack 채널 ID(`CXXXXXXXXX*`) |
 | `skills-source/my-slack-scraper/SKILL.md` | Slack 채널 URL(`workspace-a.slack.com/archives/CXXXXXXXXX1`) |
+| `skills-source/my-market-summary/SKILL.md` | 수집 대상 게시판 작성자(`특정 작성자` / `EXAMPLE_USER_ID`) |
 | `scripts/slack-scraper/config.json` | `slug`, 워크스페이스 `T...`/채널 `C...` ID |
 | `scripts/swmaestro-scraper/scrape-my-mentoring.js` | `MY_EMAIL`, `MY_NAME` (라인 322–323) |
 | `scripts/webex-mcp/.env` | `WEBEX_CLIENT_ID`, `WEBEX_CLIENT_SECRET` |
