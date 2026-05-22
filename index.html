@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claude Code + 9개 개인 스킬 — 실전 쇼케이스 · 강수혁</title>
+<title>Claude Code + 11개 개인 스킬 — 실전 쇼케이스 · 강수혁</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -142,7 +142,7 @@
 
   <div class="header">
     <div class="header-date">2026.05.22 Fri · 15:00 – 17:00 &nbsp;· 부산센터 하이텐 22호실</div>
-    <h1>Claude Code + 9개 개인 스킬 — 실전 쇼케이스</h1>
+    <h1>Claude Code + 11개 개인 스킬 — 실전 쇼케이스</h1>
     <p>AI·SW마에스트로 부산센터 멘토특강 · 강수혁 · 현재 매일 돌아가는 개인 자동화 셋업 공개</p>
   </div>
 
@@ -151,10 +151,10 @@
     <h2><span class="sec-num">01</span>왜 스킬을 만들게 됐나</h2>
     <p class="lead">같은 프롬프트를 5번 이상 치고 있다면, 그건 스킬이 되어야 합니다.</p>
     <p>저는 AI 교육·컨설팅 프리랜서로 일하면서 매일 비슷한 패턴이 반복됩니다. 아침에 여러 클라이언트 워크스페이스를 훑어보고, 미팅 장소 간 이동 일정을 넣고, 읽어야 할 트윗·유튜브를 정리하고, 하루 끝에 작업을 요약합니다. 각 작업마다 30초~15분씩 잡아먹혔습니다.</p>
-    <p>Claude Code의 Skill 기능을 발견한 뒤로는 반복되는 건 전부 <code>SKILL.md</code> 한 장으로 옮겼습니다. 지금은 9개가 매일 돌아갑니다.</p>
+    <p>Claude Code의 Skill 기능을 발견한 뒤로는 반복되는 건 전부 <code>SKILL.md</code> 한 장으로 옮겼습니다. 지금은 11개가 매일 돌아갑니다.</p>
 
     <div class="callout">
-      <strong>이 페이지의 목적</strong> — 각 스킬이 <em>어떤 반복 문제</em>를 없앴는지, <em>어떻게 호출</em>하는지, <em>어떤 결과물</em>이 나오는지를 9개 전부 나열합니다. 본인 업무에서 비슷한 반복이 있다면 구조를 그대로 가져가실 수 있도록.
+      <strong>이 페이지의 목적</strong> — 각 스킬이 <em>어떤 반복 문제</em>를 없앴는지, <em>어떻게 호출</em>하는지, <em>어떤 결과물</em>이 나오는지를 11개 전부 나열합니다. 본인 업무에서 비슷한 반복이 있다면 구조를 그대로 가져가실 수 있도록.
     </div>
   </section>
 
@@ -312,6 +312,31 @@ flowchart TD
 
       <div class="stack">
         <span>Subagent 병렬 5개</span><span>Git 변경 분석</span><span>AskUserQuestion</span><span>MEMORY.md 쓰기</span>
+      </div>
+    </div>
+
+    <!-- maestro -->
+    <div class="skill">
+      <div class="skill-head">
+        <div class="skill-name">my-maestro</div>
+        <div class="skill-title">멘토 활동 통합 관리 (서울·부산)</div>
+      </div>
+      <div class="skill-oneliner">AI·SW마에스트로 멘토링·특강 현황, 회의실 예약·빈자리 조회, Webex 공지를 한 번에 수집해 액션 아이템까지 정리.</div>
+      <div class="trigger">마에스트로 / MY 멘토링 / 빈 회의실 / 보고서 현황</div>
+
+      <div class="ba">
+        <div class="box before">
+          <div class="label">Before</div>
+          마이페이지 · 회의실 예약 · Webex 채팅방을 따로따로 열어 확인 — 게시 누락 · 모객 부진 · 답장 필요 멘션을 놓침
+        </div>
+        <div class="box after">
+          <div class="label">After</div>
+          "마에스트로 현황" → 멘토링 · 보고서 · 예약 · Webex 공지가 우선순위 액션 아이템과 함께 Markdown 1장으로
+        </div>
+      </div>
+
+      <div class="stack">
+        <span>Playwright (swmaestro.ai)</span><span>MCP: Webex</span><span>서울·부산 통합</span><span>context-sync 연계</span>
       </div>
     </div>
   </section>
@@ -497,6 +522,35 @@ flowchart TD
 
       <div class="stack">
         <span>Playwright</span><span>세션 쿠키 재사용</span><span>증분 수집</span><span>context-sync 연계</span>
+      </div>
+    </div>
+
+    <!-- market-summary -->
+    <div class="skill">
+      <div class="skill-head">
+        <div class="skill-name">my-market-summary</div>
+        <div class="skill-title">증시 마감 요약 자동 수집·발송</div>
+      </div>
+      <div class="skill-oneliner">매일 게시판의 미국·한국 증시 마감 요약 글을 수집해 Slack 발송 + 날짜별 Markdown 적재.</div>
+      <div class="trigger">증시요약 / market summary</div>
+
+      <div class="ba">
+        <div class="box before">
+          <div class="label">Before</div>
+          장 마감 후 게시판에 들어가 그날 요약 글을 직접 찾아 읽기 (US · KR 하루 2번)
+        </div>
+        <div class="box after">
+          <div class="label">After</div>
+          launchd cron이 KST 06:30 · 16:30에 자동 수집 → Slack <code>#증시요약</code> 발송 + <code>market-summary/YYYY-MM-DD.md</code> 적재
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>클라우드 IP 차단 우회</strong> — 대상 사이트가 Anthropic 클라우드 IP를 막아 Claude Code routine으로는 페치가 불가능. macOS launchd로 <em>로컬 머신 IP</em>에서 돌려 통과시키는 패턴.
+      </div>
+
+      <div class="stack">
+        <span>launchd cron</span><span>cheerio + turndown</span><span>Slack webhook</span><span>git 자동 commit</span>
       </div>
     </div>
   </section>
